@@ -62,7 +62,7 @@ def result_tens_stress_b(applied_load(n)):
     #resultant stress of bone
     resultant_stress_bone = tensile_stress_bone*(3*E_b/(E_b + E_s))**1/4
 
-    return resultant_stress_bone
+    return resultant_stress_bone, E_b
 
     
 def result_tens_stress_s(applied_load(n)):
