@@ -1,3 +1,4 @@
+import math
 import time
 
 from load_cell_library import Load_Cell_Sensor
@@ -24,6 +25,7 @@ mass = 111 #(kg)
 dia_o = 33 #(mm)
 dia_i = 19 #(mm)
 fem_offset = 47
+E_b = 17
 #Implant Design Parameters
 dia_s =  
 E_s =
@@ -39,6 +41,31 @@ load_sensor.zero_offset(fem_offset)
 load_sensor.set_calibration_factor(None)
 
 
-#calculating resultant tensile stress of implant stem
+#calculating resultant tensile stress of implant stem:
+
 n = sensor_val/10   #number of 10g weights
 applied_load = mass*n*g  #force on femoral head
+
+#properties of bone
+bone_area = math.pi/4*(dia_o**2-dia_i**2)
+moment_of_inertia_bone = math.pi/64*(dia_o**4-dia_i**4)
+
+#properties of stem
+stem_area = 
+moment_of_inertia_stem = 
+
+#calculating tensile tress on bone 
+axial_stress_bone = -applied_load/bone_area
+bending_stress_bone = (applied_load*fem_offset*dia_o/2)/moment_of_inertia_bone
+
+tensile_stress_bone = axial_stress_bone + bending_stress_bone
+
+#calculating tensile stress on stem
+axial_stress_stem = -applied_load/stem_area
+bending_stress_stem = (applied_load*fem_offset*(dia_s/2)/2)/moment_of_inertia_stem #(half stem diameter is neutral axis distance)
+
+tensile_stress_stem = axial_stress_stem + bending_stress_stem
+#resultant stresses
+
+resultant_stress_bone = tensile_stress_bone*(3*E_b/(E_b + E_s))**1/4
+resultant_stress_stem = 
