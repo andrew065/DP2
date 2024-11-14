@@ -1,5 +1,4 @@
 import time
-from pickle import GLOBAL
 
 from load_cell_library import Load_Cell_Sensor
 
