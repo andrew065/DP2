@@ -43,29 +43,45 @@ load_sensor.set_calibration_factor(None)
 
 #calculating resultant tensile stress of implant stem:
 
-n = sensor_val/10   #number of 10g weights
-applied_load = mass*n*g  #force on femoral head
 
-#properties of bone
-bone_area = math.pi/4*(dia_o**2-dia_i**2)
-moment_of_inertia_bone = math.pi/64*(dia_o**4-dia_i**4)
 
-#properties of stem
-stem_area = 
-moment_of_inertia_stem = 
+def applied_load(n):
+    n = sensor_val/10   #number of 10g weights
+    applied_load = mass*n*g  #force on femoral head
+    return applied_load
 
-#calculating tensile tress on bone 
-axial_stress_bone = -applied_load/bone_area
-bending_stress_bone = (applied_load*fem_offset*dia_o/2)/moment_of_inertia_bone
+def result_tens_stress_b(applied_load(n)):
+    #properties of bone
+    bone_area = math.pi/4*(dia_o**2-dia_i**2)
+    moment_of_inertia_bone = math.pi/64*(dia_o**4-dia_i**4)
 
-tensile_stress_bone = axial_stress_bone + bending_stress_bone
+    #calculating tensile stress on bone 
+    axial_stress_bone = -applied_load/bone_area
+    bending_stress_bone = (applied_load*fem_offset*dia_o/2)/moment_of_inertia_bone
 
-#calculating tensile stress on stem
-axial_stress_stem = -applied_load/stem_area
-bending_stress_stem = (applied_load*fem_offset*(dia_s/2)/2)/moment_of_inertia_stem #(half stem diameter is neutral axis distance)
+    tensile_stress_bone = axial_stress_bone + bending_stress_bone
 
-tensile_stress_stem = axial_stress_stem + bending_stress_stem
-#resultant stresses
+    resultant_stress_bone = tensile_stress_bone*(3*E_b/(E_b + E_s))**1/4
 
-resultant_stress_bone = tensile_stress_bone*(3*E_b/(E_b + E_s))**1/4
-resultant_stress_stem = 
+    return resultant_stress_bone
+
+    
+def result_tens_stress_s(applied_load(n)):
+    #properties of stem
+    stem_area = math.pi/4*dia_s**2
+    moment_of_inertia_stem = math.pi/64*dia_s**4
+    
+    #calculating tensile stress on stem
+    axial_stress_stem = -applied_load/stem_area
+    bending_stress_stem = (applied_load*fem_offset*(dia_s/2)/2)/moment_of_inertia_stem #(half stem diameter is neutral axis distance)
+
+    tensile_stress_stem = axial_stress_stem + bending_stress_stem
+    
+    #resultant stress of stem
+    resultant_stress_stem = tensile_stress_stem*(1-(3*E_b/(E_b + E_s)))**1/4
+
+    return resultant_stress_stem
+
+
+
+
