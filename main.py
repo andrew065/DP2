@@ -1,3 +1,6 @@
+import time
+from pickle import GLOBAL
+
 from load_cell_library import Load_Cell_Sensor
 
 #Objective 2c: Python Program
@@ -15,11 +18,11 @@ dia_i = 19 #(mm)
 fem_offset = 47
 #Implant Design Parameters
 dia_s =  
-E_s = 
+E_s =
 
 #load cell data
-sensor_val = 
-mths_postop =
+sensor_val = 0
+mths_postop = 0
 
 #initialize sensor
 load_sensor = Load_Cell_Sensor()
@@ -29,7 +32,17 @@ load_sensor.set_calibration_factor(None)
 
 
 def read_load():
-    weight = load_sensor.get_virtual_weight(10, 1)
+    
+
+
+
+    global sensor_val, mths_postop #updates global variables
+
+    while True:
+        sensor_val = load_sensor.get_virtual_weight(10, 1)
+        mths_postop += 1
+
+        time.sleep(0.25)
 
 
 #calculating resultant tensile stress of implant stem
