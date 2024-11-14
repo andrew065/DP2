@@ -1,6 +1,6 @@
 #Objective 2c: Python Program
 
-#constant global variables
+#defining variables:
 
 #Gravitational Constant
 g = 9.81
