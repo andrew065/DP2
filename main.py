@@ -30,3 +30,8 @@ load_sensor.set_calibration_factor(None)
 
 def read_load():
     weight = load_sensor.get_virtual_weight(10, 1)
+
+
+#calculating resultant tensile stress of implant stem
+n = sensor_val/10   #number of 10g weights
+applied_load = mass*n*g  #force on femoral head
