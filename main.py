@@ -41,9 +41,7 @@ load_sensor.zero_offset(fem_offset)
 load_sensor.set_calibration_factor(None)
 
 
-#calculating resultant tensile stress of implant stem:
-
-
+#calculating resultant tensile stress of implant stem and bone:
 
 def applied_load(n):
     n = sensor_val/10   #number of 10g weights
@@ -60,7 +58,8 @@ def result_tens_stress_b(applied_load(n)):
     bending_stress_bone = (applied_load*fem_offset*dia_o/2)/moment_of_inertia_bone
 
     tensile_stress_bone = axial_stress_bone + bending_stress_bone
-
+    
+    #resultant stress of bone
     resultant_stress_bone = tensile_stress_bone*(3*E_b/(E_b + E_s))**1/4
 
     return resultant_stress_bone
