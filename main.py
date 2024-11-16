@@ -25,7 +25,7 @@ mass = 111 #(kg)
 dia_o = 33 #(mm)
 dia_i = 19 #(mm)
 fem_offset = 47
-E_b = 17
+
 #Implant Design Parameters
 dia_s =  
 E_s =
@@ -46,7 +46,12 @@ load_sensor.set_calibration_factor(None)
 def applied_load(n):
     n = sensor_val/10   #number of 10g weights
     applied_load = mass*n*g  #force on femoral head
-    return applied_load
+    return round(applied_load,1)
+#calculating elastic modulus of bone
+
+def E_b(age):
+    E_b = -0.123*(age-40)+17
+    return round(E_b,1)
 
 def result_tens_stress_b(applied_load(n)):
     #properties of bone
@@ -60,9 +65,9 @@ def result_tens_stress_b(applied_load(n)):
     tensile_stress_bone = axial_stress_bone + bending_stress_bone
     
     #resultant stress of bone
-    resultant_stress_bone = tensile_stress_bone*(3*E_b/(E_b + E_s))**1/4
+    resultant_stress_bone = tensile_stress_bone*(3*E_b(age)/(E_b(age) + E_s))**1/4
 
-    return resultant_stress_bone, E_b
+    return round(resultant_stress_bone, 1) 
 
     
 def result_tens_stress_s(applied_load(n)):
@@ -72,14 +77,14 @@ def result_tens_stress_s(applied_load(n)):
     
     #calculating tensile stress on stem
     axial_stress_stem = -applied_load/stem_area
-    bending_stress_stem = (applied_load*fem_offset*(dia_s/2)/2)/moment_of_inertia_stem #(half stem diameter is neutral axis distance)
+    bending_stress_stem = (applied_load*fem_offset*(dia_s/2))/moment_of_inertia_stem #(half stem diameter is neutral axis distance)
 
     tensile_stress_stem = axial_stress_stem + bending_stress_stem
     
     #resultant stress of stem
     resultant_stress_stem = tensile_stress_stem*(1-(3*E_b/(E_b + E_s)))**1/4
 
-    return resultant_stress_stem
+    return round(resultant_stress_stem, 1)
 
 
 
