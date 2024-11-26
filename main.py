@@ -1,62 +1,23 @@
-import math
+from matplotlib import pyplot as plt
 from load_cell_library import Load_Cell_Sensor
 import time
-
-
-def read_load():
-    global sensor_val, mths_postop #updates global variables
-
-    while True:
-        sensor_val = load_sensor.get_virtual_weight(10, 1)
-        mths_postop += 1
-
-        time.sleep(0.25)
-
+import math
 
 def femoral_stress():
     return None
 
-#Objective 2c: Python Program
-
-#defining variables:
-
-#Gravitational Constant
-g = 9.81
-#assigned patient data
-age = 51 #(years)
-mass = 111 #(kg)
-#Femoral Bone Morphology
-dia_o = 33 #(mm)
-dia_i = 19 #(mm)
-fem_offset = 47
-
-#Implant Design Parameters
-dia_s =  
-E_s =
-
-#load cell data
-sensor_val = 0
-mths_postop = 0
-
-#initialize sensor
-load_sensor = Load_Cell_Sensor()
-load_sensor.begin()
-load_sensor.zero_offset(fem_offset)
-load_sensor.set_calibration_factor(None)
-
 
 #calculating resultant tensile stress of implant stem and bone:
-
 def applied_load(n):
     n = sensor_val/10   #number of 10g weights
     load = mass*n*g  #force on femoral head
     return round(load, 1)
+
+
 #calculating elastic modulus of bone
-
-
 def em_b(age):
     modulus_b = -0.123*(age-40)+17
-    return round(modulus_b,1)
+    return round(modulus_b,1) #TODO: double check rounding
 
 
 def result_tens_stress_b(load):
@@ -93,5 +54,84 @@ def result_tens_stress_s(load):
     return round(resultant_stress_stem, 1)
 
 
+def uts(mths, e_implant, e_bone):
+    e_ratio = math.sqrt(e_implant/e_bone)
+    tensile_strength = 175/(1+0.05*math.e**(0.06*mths*e_ratio))
+
+    return round(tensile_strength, 1)
 
 
+def plot_chart(t_post_op, r_stress, ultimate_strength):
+    fig, axes = plt.subplots(figsize=(8, 4))
+
+    axes.plot(t_post_op, ultimate_strength, label='Ultimate tensile strength in bone (UTSb)')
+    axes.plot(t_post_op, r_stress, label='Resultant tensile stress in bone (σ resb')
+
+    axes.set(xlabel='Time (Years Post-Surgery', ylabel='Stress (MPa)')
+    axes.legend(loc='upper right')
+
+    plt.title('Stress vs Time Post Surgery')
+    plt.minorticks_on()
+    plt.grid(which='both', axis='both')
+    plt.show()
+
+
+def read_load():
+    global sensor_val, mths_postop #updates global variables
+
+    print('\t'.join(key for key in ['mths', 'applied load', 'Res. stress, bone', 'Res. stress, stem', 'E, bone', 'UTS, bone']))
+
+
+    while True:
+        sensor_val = load_sensor.get_virtual_weight(10, 1) #TODO: update to check from actual sensor
+        load = applied_load(sensor_val)
+        # sensor_val = load_sensor.get_weight()
+
+        if sensor_val > 0:
+            mths_postop += 1
+            E_b = em_b(sensor_val + mths_postop/12)
+
+            dataset[0].append(mths_postop)
+            dataset[1].append(load)
+            dataset[2].append(result_tens_stress_b(load))
+            dataset[3].append(result_tens_stress_s(load))
+            dataset[4].append(E_b)
+            dataset[5].append(uts(mths_postop, E_s, E_b))
+
+            print('\t\t\t'.join(map(str, [*map(lambda data: data[-1], dataset)])))
+
+        if len(dataset[0]) == 40:
+            plot_chart(dataset[0], dataset[3], dataset[5])
+            break
+
+        time.sleep(0.25)
+
+#defining variables:
+
+#Gravitational Constant
+g = 9.81
+#assigned patient data
+age = 51 #(years)
+mass = 111 #(kg)
+#Femoral Bone Morphology
+dia_o = 33 #(mm)
+dia_i = 19 #(mm)
+fem_offset = 47
+
+#Implant Design Parameters TODO: insert actual values
+dia_s = 33
+E_s = 117
+
+#load cell data
+sensor_val = 0
+mths_postop = 0
+
+dataset = [[], [], [], [], [], []]
+
+#initialize sensor
+load_sensor = Load_Cell_Sensor()
+# load_sensor.begin()
+# load_sensor.zero_offset(fem_offset)
+# load_sensor.set_calibration_factor(None)
+
+read_load()
