@@ -53,7 +53,7 @@ def E_b(age):
     E_b = -0.123*(age-40)+17
     return round(E_b,1)
 
-def result_tens_stress_b(applied_load(n)):
+def result_tens_stress_b(applied_load):
     #properties of bone
     bone_area = math.pi/4*(dia_o**2-dia_i**2)
     moment_of_inertia_bone = math.pi/64*(dia_o**4-dia_i**4)
