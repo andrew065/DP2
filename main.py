@@ -1,18 +1,110 @@
-import math
-import time
-
+from matplotlib import pyplot as plt
 from load_cell_library import Load_Cell_Sensor
+import time
+import math
+
+def femoral_stress():
+    return None
+
+
+#calculating resultant tensile stress of implant stem and bone:
+def applied_load(n):
+    n = sensor_val/10   #number of 10g weights
+    load = mass*n*g  #force on femoral head
+    return round(load, 1)
+
+
+#calculating elastic modulus of bone
+def em_b(age):
+    modulus_b = -0.123*(age-40)+17
+    return round(modulus_b,1) #TODO: double check rounding
+
+
+def result_tens_stress_b(load):
+    #properties of bone
+    bone_area = math.pi/4*(dia_o**2-dia_i**2)
+    moment_of_inertia_bone = math.pi/64*(dia_o**4-dia_i**4)
+
+    #calculating tensile stress on bone 
+    axial_stress_bone = -load / bone_area
+    bending_stress_bone = (load * fem_offset * dia_o / 2) / moment_of_inertia_bone
+
+    tensile_stress_bone = axial_stress_bone + bending_stress_bone
+    
+    #resultant stress of bone
+    resultant_stress_bone = tensile_stress_bone * (3 * em_b(age) / (em_b(age) + E_s)) ** 1 / 4
+
+    return round(resultant_stress_bone, 1) 
+
+
+def result_tens_stress_s(load):
+    #properties of stem
+    stem_area = math.pi/4*dia_s**2
+    moment_of_inertia_stem = math.pi/64*dia_s**4
+    
+    #calculating tensile stress on stem
+    axial_stress_stem = -load / stem_area
+    bending_stress_stem = (load * fem_offset * (dia_s / 2)) / moment_of_inertia_stem #(half stem diameter is neutral axis distance)
+
+    tensile_stress_stem = axial_stress_stem + bending_stress_stem
+    
+    #resultant stress of stem
+    resultant_stress_stem = tensile_stress_stem * (1 - (3 * em_b(age) / (em_b(age) + E_s))) ** 1 / 4
+
+    return round(resultant_stress_stem, 1)
+
+
+def uts(mths, e_implant, e_bone):
+    e_ratio = math.sqrt(e_implant/e_bone)
+    tensile_strength = 175/(1+0.05*math.e**(0.06*mths*e_ratio))
+
+    return round(tensile_strength, 1)
+
+
+def plot_chart(t_post_op, r_stress, ultimate_strength):
+    fig, axes = plt.subplots(figsize=(8, 4))
+
+    axes.plot(t_post_op, ultimate_strength, label='Ultimate tensile strength in bone (UTSb)')
+    axes.plot(t_post_op, r_stress, label='Resultant tensile stress in bone (σ resb')
+
+    axes.set(xlabel='Time (Years Post-Surgery', ylabel='Stress (MPa)')
+    axes.legend(loc='upper right')
+
+    plt.title('Stress vs Time Post Surgery')
+    plt.minorticks_on()
+    plt.grid(which='both', axis='both')
+    plt.show()
+
 
 def read_load():
     global sensor_val, mths_postop #updates global variables
 
+    print('\t'.join(key for key in ['mths', 'applied load', 'Res. stress, bone', 'Res. stress, stem', 'E, bone', 'UTS, bone']))
+
+
     while True:
-        sensor_val = load_sensor.get_virtual_weight(10, 1)
-        mths_postop += 1
+        sensor_val = load_sensor.get_virtual_weight(10, 1) #TODO: update to check from actual sensor
+        load = applied_load(sensor_val)
+        # sensor_val = load_sensor.get_weight()
+
+        if sensor_val > 0:
+            mths_postop += 1
+            E_b = em_b(sensor_val + mths_postop/12)
+
+            dataset[0].append(mths_postop)
+            dataset[1].append(load)
+            dataset[2].append(result_tens_stress_b(load))
+            dataset[3].append(result_tens_stress_s(load))
+            dataset[4].append(E_b)
+            dataset[5].append(uts(mths_postop, E_s, E_b))
+
+            print('\t\t\t'.join(map(str, [*map(lambda data: data[-1], dataset)])))
+
+        if len(dataset[0]) == 40:
+            plot_chart(dataset[0], dataset[3], dataset[5])
+            break
 
         time.sleep(0.25)
-
-#Objective 2c: Python Program
 
 #defining variables:
 
@@ -26,13 +118,15 @@ dia_o = 33 #(mm)
 dia_i = 19 #(mm)
 fem_offset = 47
 
-#Implant Design Parameters
-dia_s =  
-E_s =
+#Implant Design Parameters TODO: insert actual values
+dia_s = 33
+E_s = 117
 
 #load cell data
 sensor_val = 0
 mths_postop = 0
+
+dataset = [[], [], [], [], [], []]
 
 #initialize sensor
 load_sensor = Load_Cell_Sensor()
@@ -41,50 +135,7 @@ load_sensor.zero_offset(fem_offset)
 load_sensor.set_calibration_factor(None)
 
 
-#calculating resultant tensile stress of implant stem and bone:
-
-def applied_load(n):
-    n = sensor_val/10   #number of 10g weights
-    applied_load = mass*n*g  #force on femoral head
-    return round(applied_load,1)
-#calculating elastic modulus of bone
-
-def E_b(age):
-    E_b = -0.123*(age-40)+17
-    return round(E_b,1)
-
-def result_tens_stress_b(applied_load):
-    #properties of bone
-    bone_area = math.pi/4*(dia_o**2-dia_i**2)
-    moment_of_inertia_bone = math.pi/64*(dia_o**4-dia_i**4)
-
-    #calculating tensile stress on bone 
-    axial_stress_bone = -applied_load/bone_area
-    bending_stress_bone = (applied_load*fem_offset*dia_o/2)/moment_of_inertia_bone
-
-    tensile_stress_bone = axial_stress_bone + bending_stress_bone
-    
-    #resultant stress of bone
-    resultant_stress_bone = tensile_stress_bone*(3*E_b(age)/(E_b(age) + E_s))**1/4
-
-    return round(resultant_stress_bone, 1) 
-
-    
-def result_tens_stress_s(applied_load(n)):
-    #properties of stem
-    stem_area = math.pi/4*dia_s**2
-    moment_of_inertia_stem = math.pi/64*dia_s**4
-    
-    #calculating tensile stress on stem
-    axial_stress_stem = -applied_load/stem_area
-    bending_stress_stem = (applied_load*fem_offset*(dia_s/2))/moment_of_inertia_stem #(half stem diameter is neutral axis distance)
-
-    tensile_stress_stem = axial_stress_stem + bending_stress_stem
-    
-    #resultant stress of stem
-    resultant_stress_stem = tensile_stress_stem*(1-(3*E_b/(E_b + E_s)))**1/4
-
-    return round(resultant_stress_stem, 1)
+read_load()
 
 
 
