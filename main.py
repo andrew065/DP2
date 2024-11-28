@@ -98,7 +98,8 @@ def read_load():
             print('\t\t\t'.join(map(str, [*map(lambda data: data[-1], dataset)])))
 
         if len(dataset[0]) == 40:
-            plot_chart(dataset[0], dataset[3], dataset[5])
+            plot_chart(dataset[0], dataset[2], dataset[5])
+            print(f'R stress bone: {dataset[2]}')
             break
 
         time.sleep(0.25)
@@ -127,9 +128,9 @@ dataset = [[], [], [], [], [], []]
 
 #initialize sensor
 load_sensor = Load_Cell_Sensor()
-#load_sensor.begin()
-#load_sensor.zero_offset(fem_offset)
-#load_sensor.set_calibration_factor(None)
+# load_sensor.begin()
+# load_sensor.zero_offset(fem_offset)
+# load_sensor.set_calibration_factor(None)
 
 
 read_load()
