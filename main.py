@@ -3,9 +3,6 @@ from load_cell_library import Load_Cell_Sensor
 import time
 import math
 
-def femoral_stress():
-    return None
-
 
 #calculating resultant tensile stress of implant stem and bone:
 def applied_load(n):
