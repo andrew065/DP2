@@ -89,7 +89,7 @@ def read_load():
 
         if sensor_val > 0:
             mths_postop += 1
-            E_b = em_b(sensor_val + mths_postop/12)
+            E_b = em_b(age + mths_postop/12)
 
             dataset[0].append(mths_postop)
             dataset[1].append(load)
@@ -130,9 +130,9 @@ dataset = [[], [], [], [], [], []]
 
 #initialize sensor
 load_sensor = Load_Cell_Sensor()
-load_sensor.begin()
-load_sensor.zero_offset(fem_offset)
-load_sensor.set_calibration_factor(None)
+#load_sensor.begin()
+#load_sensor.zero_offset(fem_offset)
+#load_sensor.set_calibration_factor(None)
 
 
 read_load()
