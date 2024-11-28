@@ -5,39 +5,39 @@ import math
 
 
 #calculating resultant tensile stress of implant stem and bone:
-def applied_load(n):
-    n = sensor_val/10   #number of 10g weights
+def applied_load(s_val):
+    n = s_val*3/10   #number of 10g weights TODO: remove theoretical load being placed (3 plates)
     load = mass*n*g  #force on femoral head
     return round(load, 1)
 
 
 #calculating elastic modulus of bone
-def em_b(age):
-    modulus_b = -0.123*(age-40)+17
-    return round(modulus_b,1) #TODO: double check rounding
+def em_b(a):
+    modulus_b = -0.123 * (a - 40) + 17
+    return round(modulus_b, 1) #TODO: double check rounding
 
 
-def result_tens_stress_b(load):
+def result_tens_stress_b(load, e_b):
     #properties of bone
-    bone_area = math.pi/4*(dia_o**2-dia_i**2)
-    moment_of_inertia_bone = math.pi/64*(dia_o**4-dia_i**4)
+    bone_area = (math.pi/4)*(dia_o**2-dia_i**2) # A
+    moment_of_inertia_bone = (math.pi/64)*(dia_o**4-dia_i**4) # I
 
     #calculating tensile stress on bone 
     axial_stress_bone = -load / bone_area
     bending_stress_bone = (load * fem_offset * dia_o / 2) / moment_of_inertia_bone
 
     tensile_stress_bone = axial_stress_bone + bending_stress_bone
-    
-    #resultant stress of bone
-    resultant_stress_bone = tensile_stress_bone * (3 * em_b(age) / (em_b(age) + E_s)) ** 1 / 4
+
+    #calculating resultant stress on bone
+    resultant_stress_bone = tensile_stress_bone * ((3 * e_b) / (e_b + E_s)) ** (1 / 4)
 
     return round(resultant_stress_bone, 1) 
 
 
-def result_tens_stress_s(load):
+def result_tens_stress_s(load, e_b):
     #properties of stem
-    stem_area = math.pi/4*dia_s**2
-    moment_of_inertia_stem = math.pi/64*dia_s**4
+    stem_area = (math.pi/4)*(dia_s**2)
+    moment_of_inertia_stem = (math.pi/64)*(dia_s**4)
     
     #calculating tensile stress on stem
     axial_stress_stem = -load / stem_area
@@ -46,14 +46,14 @@ def result_tens_stress_s(load):
     tensile_stress_stem = axial_stress_stem + bending_stress_stem
     
     #resultant stress of stem
-    resultant_stress_stem = tensile_stress_stem * (1 - (3 * em_b(age) / (em_b(age) + E_s))) ** 1 / 4
+    resultant_stress_stem = tensile_stress_stem * (1 - (3 * e_b / (e_b + E_s))) ** 1 / 4
 
     return round(resultant_stress_stem, 1)
 
 
 def uts(mths, e_implant, e_bone):
-    e_ratio = math.sqrt(e_implant/e_bone)
-    tensile_strength = 175/(1+0.05*math.e**(0.06*mths*e_ratio))
+    e_ratio = math.sqrt(e_implant / e_bone)
+    tensile_strength = 175 / (1 + 0.05 * math.e ** (0.06 * mths * e_ratio))
 
     return round(tensile_strength, 1)
 
@@ -64,7 +64,7 @@ def plot_chart(t_post_op, r_stress, ultimate_strength):
     axes.plot(t_post_op, ultimate_strength, label='Ultimate tensile strength in bone (UTSb)')
     axes.plot(t_post_op, r_stress, label='Resultant tensile stress in bone (σ resb')
 
-    axes.set(xlabel='Time (Years Post-Surgery', ylabel='Stress (MPa)')
+    axes.set(xlabel='Time (Years Post-Surgery)', ylabel='Stress (MPa)')
     axes.legend(loc='upper right')
 
     plt.title('Stress vs Time Post Surgery')
@@ -86,24 +86,23 @@ def read_load():
 
         if sensor_val > 0:
             mths_postop += 1
-            E_b = em_b(age + mths_postop/12)
+            e_b = em_b(age + mths_postop/12)
 
-            dataset[0].append(mths_postop)
+            dataset[0].append(round(mths_postop/12, 1))
             dataset[1].append(load)
-            dataset[2].append(result_tens_stress_b(load))
-            dataset[3].append(result_tens_stress_s(load))
-            dataset[4].append(E_b)
-            dataset[5].append(uts(mths_postop, E_s, E_b))
+            dataset[2].append(result_tens_stress_b(load, e_b))
+            dataset[3].append(result_tens_stress_s(load, e_b))
+            dataset[4].append(e_b)
+            dataset[5].append(uts(mths_postop/12, E_s, e_b))
 
             print('\t\t\t'.join(map(str, [*map(lambda data: data[-1], dataset)])))
 
-        if len(dataset[0]) == 40:
+        if len(dataset[0]) == 360:
             plot_chart(dataset[0], dataset[2], dataset[5])
-            print(f'Load: {dataset[1]}')
-            print(f'R stress bone: {dataset[2]}')
+
             break
 
-        time.sleep(0.25)
+        time.sleep(0)
 
 #defining variables:
 
@@ -119,7 +118,7 @@ fem_offset = 47
 
 #Implant Design Parameters TODO: insert actual values
 dia_s = 33
-E_s = 117
+E_s = 105
 
 #load cell data
 sensor_val = 0
