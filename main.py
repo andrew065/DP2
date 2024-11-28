@@ -53,7 +53,7 @@ def result_tens_stress_s(load):
 
 def uts(mths, e_implant, e_bone):
     e_ratio = math.sqrt(e_implant/e_bone)
-    tensile_strength = 175/(1+0.05*math.e**(0.06*mths*e_ratio))
+    tensile_strength = 175/(1+0.05*math.e**(0.06*mths/12*e_ratio))
 
     return round(tensile_strength, 1)
 
@@ -62,7 +62,7 @@ def plot_chart(t_post_op, r_stress, ultimate_strength):
     fig, axes = plt.subplots(figsize=(8, 4))
 
     axes.plot(t_post_op, ultimate_strength, label='Ultimate tensile strength in bone (UTSb)')
-    axes.plot(t_post_op, r_stress, label='Resultant tensile stress in bone (σ resb')
+    axes.plot(t_post_op, r_stress, label='Resultant tensile stress in bone (σ resb)')
 
     axes.set(xlabel='Time (Years Post-Surgery', ylabel='Stress (MPa)')
     axes.legend(loc='upper right')
@@ -98,9 +98,7 @@ def read_load():
             print('\t\t\t'.join(map(str, [*map(lambda data: data[-1], dataset)])))
 
         if len(dataset[0]) == 40:
-            plot_chart(dataset[0], dataset[2], dataset[5])
-            print(f'Load: {dataset[1]}')
-            print(f'R stress bone: {dataset[2]}')
+            plot_chart(dataset[0], dataset[3], dataset[5])
             break
 
         time.sleep(0.25)
@@ -112,6 +110,7 @@ g = 9.81
 #assigned patient data
 age = 51 #(years)
 mass = 111 #(kg)
+s = 'male'
 #Femoral Bone Morphology
 dia_o = 33 #(mm)
 dia_i = 19 #(mm)
@@ -119,7 +118,7 @@ fem_offset = 47
 
 #Implant Design Parameters TODO: insert actual values
 dia_s = 33
-E_s = 117
+E_s = 105
 
 #load cell data
 sensor_val = 0
@@ -129,9 +128,9 @@ dataset = [[], [], [], [], [], []]
 
 #initialize sensor
 load_sensor = Load_Cell_Sensor()
-# load_sensor.begin()
-# load_sensor.zero_offset(fem_offset)
-# load_sensor.set_calibration_factor(None)
+#load_sensor.begin()
+#load_sensor.zero_offset(fem_offset)
+#load_sensor.set_calibration_factor(None)
 
 
 read_load()
