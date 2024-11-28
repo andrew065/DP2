@@ -99,6 +99,7 @@ def read_load():
 
         if len(dataset[0]) == 40:
             plot_chart(dataset[0], dataset[2], dataset[5])
+            print(f'Load: {dataset[1]}')
             print(f'R stress bone: {dataset[2]}')
             break
 
