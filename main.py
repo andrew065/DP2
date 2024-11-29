@@ -89,7 +89,7 @@ def read_load():
             mths_postop += 1
             e_b = em_b(age + mths_postop/12)
 
-            dataset[0].append(round(mths_postop/12, 1))
+            dataset[0].append(round(mths_postop, 1))
             dataset[1].append(load)
             dataset[2].append(result_tens_stress_b(load, e_b))
             dataset[3].append(result_tens_stress_s(load, e_b))
