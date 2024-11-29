@@ -133,7 +133,7 @@ def read_load():
 
         #Andrew Lian
         if len(dataset[0]) == 360:
-            plot_chart(dataset[0], dataset[2], dataset[5])
+            plot_chart([*map(lambda data: data/12, dataset[0])], dataset[2], dataset[5])
             break
 
         time.sleep(0)
