@@ -54,7 +54,7 @@ def result_tens_stress_s(load, e_b):
 
 def uts(mths, e_implant, e_bone):
     e_ratio = math.sqrt(e_implant/e_bone)
-    tensile_strength = 175/(1+0.05*math.e**(0.06*(mths)*e_ratio))
+    tensile_strength = 175/(1+0.05*math.e**(0.06*(mths/12)*e_ratio))
 
     return round(tensile_strength, 1)
 
@@ -89,7 +89,7 @@ def read_load():
             mths_postop += 1
             e_b = em_b(age + mths_postop/12)
 
-            dataset[0].append(round(mths_postop/12, 1))
+            dataset[0].append(round(mths_postop, 1))
             dataset[1].append(load)
             dataset[2].append(result_tens_stress_b(load, e_b))
             dataset[3].append(result_tens_stress_s(load, e_b))
@@ -124,8 +124,6 @@ def read_load():
 
         if len(dataset[0]) == 360:
             plot_chart(dataset[0], dataset[2], dataset[5])
-            print(f'Load: {dataset[1]}')
-            print(f'R stress bone: {dataset[2]}')
             break
 
         time.sleep(0)
@@ -159,14 +157,13 @@ load_sensor = Load_Cell_Sensor()
 #load_sensor.zero_offset(fem_offset)
 #load_sensor.set_calibration_factor(None)
 
-
-read_load()
-
 #setting LED pins of each colour
 #green_led = LED()
 #yellow_led = LED()
 #red_led = LED()
 
+
+read_load()
 
 
 
