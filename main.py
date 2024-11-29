@@ -126,7 +126,7 @@ def read_load():
             #red_led.on()
 
         #else:     #if resultant stress of bone is >= to UTS
-            #red_led.blink(0.5,0.5)
+            #red_led.blink(0.05)
             #green_led.off()
             #yellow_led.off()
 
