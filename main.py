@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 from load_cell_library import Load_Cell_Sensor
 import time
 import math
-from gpiozero import LED
+#from gpiozero import LED
 
 
 #calculating resultant tensile stress of implant stem and bone:
@@ -99,7 +99,7 @@ def read_load():
             print('\t\t\t'.join(map(str, [*map(lambda data: data[-1], dataset)])))
         
         #LED outputs
-        
+
         #if datset[2] < 0.1 * dataset[5]:
             #green_led.on()
             #yellow_led.off()
