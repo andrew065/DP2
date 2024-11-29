@@ -54,7 +54,7 @@ def result_tens_stress_s(load, e_b):
 
 def uts(mths, e_implant, e_bone):
     e_ratio = math.sqrt(e_implant/e_bone)
-    tensile_strength = 175/(1+0.05*math.e**(0.06*mths*e_ratio))
+    tensile_strength = 175/(1+0.05*math.e**(0.06*(mths)*e_ratio))
 
     return round(tensile_strength, 1)
 
@@ -100,17 +100,17 @@ def read_load():
         
         #LED outputs
 
-        #if datset[2] < 0.1 * dataset[5]:
+        #if datset[2][mths_postop] < 0.1*dataset[5][mths_postop]:
             #green_led.on()
             #yellow_led.off()
             #red_led.off()
 
-        #if datset[2] >= 0.1 * dataset[5] and dataset[2] < 0.5 * dataset[5]:
+        #if datset[2][mths_postop] >= 0.1*dataset[5][mths_postop] and dataset[2][mths_postop] < 0.5*dataset[5][mths_postop]:
             #green_led.off()
             #yellow_led.on()
             #red_led.off()
 
-        #elif datset[2] >= 0.5 * dataset[5] and dataset[2] < dataset[5]:
+        #elif datset[2][mths_postop] >= 0.5 * dataset[5][mths_postop] and dataset[2][mths_postop] < dataset[5][mths_postop]:
             #green_led.off()
             #yellow_led.off()
             #red_led.on()
