@@ -54,7 +54,7 @@ def result_tens_stress_s(load, e_b):
 
 def uts(mths, e_implant, e_bone):
     e_ratio = math.sqrt(e_implant/e_bone)
-    tensile_strength = 175/(1+0.05*math.e**(0.06*(mths/12)*e_ratio))
+    tensile_strength = 175/(1+0.05*math.e**(0.06*(mths)*e_ratio))
 
     return round(tensile_strength, 1)
 
