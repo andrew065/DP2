@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 from load_cell_library import Load_Cell_Sensor
 import time
 import math
+from gpiozero import LED
 
 
 #calculating resultant tensile stress of implant stem and bone:
@@ -53,7 +54,7 @@ def result_tens_stress_s(load, e_b):
 
 def uts(mths, e_implant, e_bone):
     e_ratio = math.sqrt(e_implant/e_bone)
-    tensile_strength = 175/(1+0.05*math.e**(0.06*mths*e_ratio))
+    tensile_strength = 175/(1+0.05*math.e**(0.06*(mths/12)*e_ratio))
 
     return round(tensile_strength, 1)
 
@@ -96,6 +97,30 @@ def read_load():
             dataset[5].append(uts(mths_postop/12, E_s, e_b))
 
             print('\t\t\t'.join(map(str, [*map(lambda data: data[-1], dataset)])))
+        
+        #LED outputs
+        
+        #if datset[2] < 0.1 * dataset[5]:
+            #green_led.on()
+            #yellow_led.off()
+            #red_led.off()
+
+        #if datset[2] >= 0.1 * dataset[5] and dataset[2] < 0.5 * dataset[5]:
+            #green_led.off()
+            #yellow_led.on()
+            #red_led.off()
+
+        #elif datset[2] >= 0.5 * dataset[5] and dataset[2] < dataset[5]:
+            #green_led.off()
+            #yellow_led.off()
+            #red_led.on()
+
+        #else:     #if resultant stress of bone is >= to UTS
+            #red_led.blink(0.5,0.5)
+            #green_led.off()
+            #yellow_led.off()
+
+
 
         if len(dataset[0]) == 40:
             plot_chart(dataset[0], dataset[2], dataset[5])
@@ -136,6 +161,12 @@ load_sensor = Load_Cell_Sensor()
 
 
 read_load()
+
+#setting LED pins of each colour
+#green_led = LED()
+#yellow_led = LED()
+#red_led = LED()
+
 
 
 
