@@ -158,9 +158,9 @@ load_sensor = Load_Cell_Sensor()
 #load_sensor.set_calibration_factor(None)
 
 #setting LED pins of each colour
-#green_led = LED()
-#yellow_led = LED()
-#red_led = LED()
+#green_led = LED(26)
+#yellow_led = LED(20)
+#red_led = LED(16)
 
 
 read_load()
