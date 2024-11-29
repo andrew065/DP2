@@ -4,7 +4,7 @@ import time
 import math
 #from gpiozero import LED
 
-
+#Miguel Gonzalez 400529229
 #calculating resultant tensile stress of implant stem and bone:
 def applied_load(s_val):
     n = s_val*3/10   #number of 10g weights TODO: remove theoretical load being placed (3 plates)
@@ -14,7 +14,16 @@ def applied_load(s_val):
 
 #calculating elastic modulus of bone
 def em_b(a):
-    modulus_b = -0.123 * (a - 40) + 17
+    if a <= 40:
+        modulus_b = 17
+    else:  #(if age is greater than 40)
+        if s == 'male':        #if sex of patient is male
+            modulus_b = -0.123 * (a - 40) + 17
+        elif s == 'female':    #if sex of patient is male
+            modulus_b = -0.196 * (a - 40) + 17
+        else:
+            print("Invalid s value. Try using only lowercase characters")
+    
     return round(modulus_b, 1) #TODO: double check rounding
 
 
@@ -51,7 +60,7 @@ def result_tens_stress_s(load, e_b):
 
     return round(resultant_stress_stem, 1)
 
-
+#Andrew Lian
 def uts(mths, e_implant, e_bone):
     e_ratio = math.sqrt(e_implant/e_bone)
     tensile_strength = 175/(1+0.05*math.e**(0.06*(mths)*e_ratio))
@@ -98,6 +107,7 @@ def read_load():
 
             print('\t\t\t'.join(map(str, [*map(lambda data: data[-1], dataset)])))
         
+        #Miguel Gonzalez 400529229
         #LED outputs
 
         #if datset[2][mths_postop] < 0.1*dataset[5][mths_postop]:
@@ -121,13 +131,14 @@ def read_load():
             #yellow_led.off()
 
 
-
+        #Andrew Lian
         if len(dataset[0]) == 360:
             plot_chart(dataset[0], dataset[2], dataset[5])
             break
 
         time.sleep(0)
 
+#Miguel Gonzalez 400529229
 #defining variables:
 
 #Gravitational Constant
@@ -141,7 +152,7 @@ dia_o = 33 #(mm)
 dia_i = 19 #(mm)
 fem_offset = 47
 
-#Implant Design Parameters TODO: insert actual values
+#Implant Design Parameters 
 dia_s = 33
 E_s = 105
 
@@ -149,6 +160,12 @@ E_s = 105
 sensor_val = 0
 mths_postop = 0
 
+#setting LED pins of each colour
+#green_led = LED(26)
+#yellow_led = LED(20)
+#red_led = LED(16)
+
+#Andrew Lian
 dataset = [[], [], [], [], [], []]
 
 #initialize sensor
@@ -157,10 +174,7 @@ load_sensor = Load_Cell_Sensor()
 #load_sensor.zero_offset(fem_offset)
 #load_sensor.set_calibration_factor(None)
 
-#setting LED pins of each colour
-#green_led = LED(26)
-#yellow_led = LED(20)
-#red_led = LED(16)
+
 
 
 read_load()
