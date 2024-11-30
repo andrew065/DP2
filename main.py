@@ -178,8 +178,8 @@ dataset = [[], [], [], [], [], []] # define dataset to store calculated stress v
 #initialize sensor
 load_sensor = Load_Cell_Sensor()
 #load_sensor.begin()
-#load_sensor.zero_offset(fem_offset)
-#load_sensor.set_calibration_factor(None)
+#load_sensor.zero_offset(zero_offset)
+#load_sensor.set_calibration_factor(calibration_factor)
 
 read_load()
 
