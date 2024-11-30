@@ -105,7 +105,7 @@ def read_load():
             dataset[4].append(e_b)
             dataset[5].append(uts(mths_postop/12, E_s, e_b))
 
-            print('\t\t\t'.join(map(str, [*map(lambda data: data[-1], dataset)])))
+            print('\t\t\t'.join(map(str, [*map(lambda data: data[-1], dataset)]))) #TODO: fix to line up with load
         
         #Miguel Gonzalez 400529229
         #LED outputs
