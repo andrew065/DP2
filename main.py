@@ -86,7 +86,7 @@ def plot_chart(t_post_op, r_stress, ultimate_strength):
 def read_load():
     global sensor_val, mths_postop #updates global variables
 
-    print('\t'.join(key for key in ['mths', 'applied load', 'Res. stress, bone', 'Res. stress, stem', 'E, bone', 'UTS, bone']))
+    print('\t'.join(key for key in ['mths', 'applied load', 'Res. stress, bone', 'Res. stress, stem', 'E, bone', '\t', 'UTS, bone']))
 
 
     while True:
@@ -154,7 +154,7 @@ fem_offset = 47
 
 #Implant Design Parameters 
 dia_s = 33
-E_s = 105
+E_s = 105 #elastic modulus of Ti-6Al-7Nb
 
 #load cell data
 sensor_val = 0
@@ -173,9 +173,6 @@ load_sensor = Load_Cell_Sensor()
 #load_sensor.begin()
 #load_sensor.zero_offset(fem_offset)
 #load_sensor.set_calibration_factor(None)
-
-
-
 
 read_load()
 
