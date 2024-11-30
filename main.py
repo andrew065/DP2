@@ -14,6 +14,7 @@ def applied_load(s_val):
 
 #calculating elastic modulus of bone
 def em_b(a):
+    modulus_b = None
     if a <= 40:
         modulus_b = 17
     else:  #(if age is greater than 40)
@@ -23,7 +24,7 @@ def em_b(a):
             modulus_b = -0.196 * (a - 40) + 17
         else:
             print("Invalid s value. Try using only lowercase characters")
-    
+
     return round(modulus_b, 1) #TODO: double check rounding
 
 
@@ -60,14 +61,14 @@ def result_tens_stress_s(load, e_b):
 
     return round(resultant_stress_stem, 1)
 
-#Andrew Lian
+#Andrew Lian 400567387
 def uts(mths, e_implant, e_bone):
     e_ratio = math.sqrt(e_implant/e_bone)
     tensile_strength = 175/(1+0.05*math.e**(0.06*(mths)*e_ratio))
 
     return round(tensile_strength, 1)
 
-
+#Andrew Lian 400567387
 def plot_chart(t_post_op, r_stress, ultimate_strength):
     fig, axes = plt.subplots(figsize=(8, 4))
 
@@ -82,11 +83,14 @@ def plot_chart(t_post_op, r_stress, ultimate_strength):
     plt.grid(which='both', axis='both')
     plt.show()
 
-
+#Andrew Lian 400567387 & Miguel Gonzalez 400529229
 def read_load():
     global sensor_val, mths_postop #updates global variables
 
-    print('\t'.join(key for key in ['mths', 'applied load', 'Res. stress, bone', 'Res. stress, stem', 'E, bone', '\t', 'UTS, bone']))
+
+    # header row
+    headers = ['mths', 'applied load', 'Res. stress, bone', 'Res. stress, stem', 'E, bone', 'UTS, bone']
+    print(' '.join(header.ljust(20) for header in headers))
 
 
     while True:
@@ -105,7 +109,9 @@ def read_load():
             dataset[4].append(e_b)
             dataset[5].append(uts(mths_postop/12, E_s, e_b))
 
-            print('\t\t\t'.join(map(str, [*map(lambda data: data[-1], dataset)]))) #TODO: fix to line up with load
+            print(' '.join(str(data).ljust(20) for data in [*map(lambda data: data[-1], dataset)]))
+
+            # print('\t\t\t'.join(map(str, [*map(lambda data: data[-1], dataset)]))) #TODO: fix to line up with load
         
         #Miguel Gonzalez 400529229
         #LED outputs
@@ -152,13 +158,15 @@ dia_o = 33 #(mm)
 dia_i = 19 #(mm)
 fem_offset = 47
 
-#Implant Design Parameters 
+#Implant Design Parameters
 dia_s = 33
 E_s = 105 #elastic modulus of Ti-6Al-7Nb
 
 #load cell data
 sensor_val = 0
 mths_postop = 0
+zero_offset = 107832.875
+calibration_factor = 424.93263888
 
 #setting LED pins of each colour
 #green_led = LED(26)
@@ -166,7 +174,7 @@ mths_postop = 0
 #red_led = LED(16)
 
 #Andrew Lian
-dataset = [[], [], [], [], [], []]
+dataset = [[], [], [], [], [], []] # define dataset to store calculated stress values
 
 #initialize sensor
 load_sensor = Load_Cell_Sensor()
