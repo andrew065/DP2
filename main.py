@@ -111,8 +111,7 @@ def read_load():
 
             print(' '.join(str(data).ljust(20) for data in [*map(lambda data: data[-1], dataset)]))
 
-            # print('\t\t\t'.join(map(str, [*map(lambda data: data[-1], dataset)]))) #TODO: fix to line up with load
-        
+
         #Miguel Gonzalez 400529229
         #LED outputs
 
