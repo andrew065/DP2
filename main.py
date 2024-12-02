@@ -121,7 +121,7 @@ def read_load():
             yellow_led.off()
             red_led.off()
 
-        if 0.1*dataset[5][mths_postop] <= dataset[2][mths_postop] < 0.5*dataset[5][mths_postop]:
+        elif 0.1*dataset[5][mths_postop] <= dataset[2][mths_postop] < 0.5*dataset[5][mths_postop]:
             green_led.off()
             yellow_led.on()
             red_led.off()
