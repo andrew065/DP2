@@ -2,12 +2,12 @@ from matplotlib import pyplot as plt
 from load_cell_library import Load_Cell_Sensor
 import time
 import math
-#from gpiozero import LED
+from gpiozero import LED
 
 #Miguel Gonzalez 400529229
 #calculating resultant tensile stress of implant stem and bone:
 def applied_load(s_val):
-    n = s_val*3/10   #number of 10g weights TODO: remove theoretical load being placed (3 plates)
+    n = s_val/10   #number of 10g weights
     load = mass*n*g  #force on femoral head
     return round(load, 1)
 
@@ -25,7 +25,7 @@ def em_b(a):
         else:
             print("Invalid s value. Try using only lowercase characters")
 
-    return round(modulus_b, 1) #TODO: double check rounding
+    return round(modulus_b, 1)
 
 
 def result_tens_stress_b(load, e_b):
@@ -94,9 +94,10 @@ def read_load():
 
 
     while True:
-        sensor_val = load_sensor.get_virtual_weight(10, 1) #TODO: update to check from actual sensor
+        sensor_val = load_sensor.get_weight()
+        # sensor_val = load_sensor.get_virtual_weight(10, 1) #TODO: update to check from actual sensor
         load = applied_load(sensor_val)
-        # sensor_val = load_sensor.get_weight()
+
 
         if sensor_val > 0:
             mths_postop += 1
@@ -115,25 +116,25 @@ def read_load():
         #Miguel Gonzalez 400529229
         #LED outputs
 
-        #if datset[2][mths_postop] < 0.1*dataset[5][mths_postop]:
-            #green_led.on()
-            #yellow_led.off()
-            #red_led.off()
+        if dataset[2][mths_postop] < 0.1*dataset[5][mths_postop]:
+            green_led.on()
+            yellow_led.off()
+            red_led.off()
 
-        #if datset[2][mths_postop] >= 0.1*dataset[5][mths_postop] and dataset[2][mths_postop] < 0.5*dataset[5][mths_postop]:
-            #green_led.off()
-            #yellow_led.on()
-            #red_led.off()
+        if 0.1*dataset[5][mths_postop] <= dataset[2][mths_postop] < 0.5*dataset[5][mths_postop]:
+            green_led.off()
+            yellow_led.on()
+            red_led.off()
 
-        #elif datset[2][mths_postop] >= 0.5 * dataset[5][mths_postop] and dataset[2][mths_postop] < dataset[5][mths_postop]:
-            #green_led.off()
-            #yellow_led.off()
-            #red_led.on()
+        elif 0.5 * dataset[5][mths_postop] <= dataset[2][mths_postop] < dataset[5][mths_postop]:
+            green_led.off()
+            yellow_led.off()
+            red_led.on()
 
-        #else:     #if resultant stress of bone is >= to UTS
-            #red_led.blink(0.05)
-            #green_led.off()
-            #yellow_led.off()
+        else:     #if resultant stress of bone is >= to UTS
+            red_led.blink(0.05)
+            green_led.off()
+            yellow_led.off()
 
 
         #Andrew Lian
@@ -168,18 +169,18 @@ zero_offset = 107832.875
 calibration_factor = 424.93263888
 
 #setting LED pins of each colour
-#green_led = LED(26)
-#yellow_led = LED(20)
-#red_led = LED(16)
+green_led = LED(26)
+yellow_led = LED(20)
+red_led = LED(16)
 
 #Andrew Lian
 dataset = [[], [], [], [], [], []] # define dataset to store calculated stress values
 
 #initialize sensor
 load_sensor = Load_Cell_Sensor()
-#load_sensor.begin()
-#load_sensor.zero_offset(zero_offset)
-#load_sensor.set_calibration_factor(calibration_factor)
+load_sensor.begin()
+load_sensor.zero_offset(zero_offset)
+load_sensor.set_calibration_factor(calibration_factor)
 
 read_load()
 
