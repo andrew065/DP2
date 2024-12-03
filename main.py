@@ -143,6 +143,8 @@ def read_load():
         #Andrew Lian
         if len(dataset[0]) == 360:
             plot_chart([*map(lambda data: data/12, dataset[0])], dataset[2], dataset[5])
+            
+            #resets all LEDs to 'off' status
             green_led.off()
             yellow_led.off()
             red_led.off()
