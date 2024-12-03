@@ -23,7 +23,7 @@ def em_b(a):
         elif s == 'female':    #if sex of patient is female
             modulus_b = -0.196 * (a - 40) + 17
         else:
-            print("Invalid s value. Try using only lowercase characters")
+            print("Invalid s value. Must be either 'male' or 'female'")
 
     return round(modulus_b, 1)
 
@@ -98,9 +98,10 @@ def read_load():
 
     while True:
         sensor_val = load_sensor.get_weight()
-        # sensor_val = load_sensor.get_virtual_weight(10, 1) #TODO: update to check from actual sensor
+        #sensor_val = load_sensor.get_virtual_weight(10, 1)    #virtual sensor (used for testing)
         load = applied_load(sensor_val)
 
+        #creating a chart of data and plotting UTS and Result-stress vs years
         if sensor_val > 0:
             mths_postop += 1
             e_b = em_b(age + mths_postop/12)
@@ -170,14 +171,13 @@ E_s = 105 #elastic modulus of Ti-6Al-7Nb
 #load cell data
 sensor_val = 0
 mths_postop = 0
-zero_offset = -139693.0625
-calibration_factor = 420.47569444
-
+zero_offset = 107832.875
+calibration_factor = 424.93263888
 
 #setting LED pins of each colour
-green_led = LED(19)
-yellow_led = LED(6)
-red_led = LED(12)
+green_led = LED(26)
+yellow_led = LED(20)
+red_led = LED(16)
 
 #Andrew Lian
 dataset = [[], [], [], [], [], []] # define dataset to store calculated stress values
