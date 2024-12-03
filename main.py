@@ -20,7 +20,7 @@ def em_b(a):
     else:  #(if age is greater than 40)
         if s == 'male':        #if sex of patient is male
             modulus_b = -0.123 * (a - 40) + 17
-        elif s == 'female':    #if sex of patient is male
+        elif s == 'female':    #if sex of patient is female
             modulus_b = -0.196 * (a - 40) + 17
         else:
             print("Invalid s value. Try using only lowercase characters")
@@ -87,17 +87,19 @@ def plot_chart(t_post_op, r_stress, ultimate_strength):
 def read_load():
     global sensor_val, mths_postop #updates global variables
 
-
     # header row
     headers = ['mths', 'applied load', 'Res. stress, bone', 'Res. stress, stem', 'E, bone', 'UTS, bone']
     print(' '.join(header.ljust(20) for header in headers))
 
+    #make sure LEDs are off
+    red_led.off()
+    green_led.off()
+    yellow_led.off()
 
     while True:
         sensor_val = load_sensor.get_weight()
         # sensor_val = load_sensor.get_virtual_weight(10, 1) #TODO: update to check from actual sensor
         load = applied_load(sensor_val)
-
 
         if sensor_val > 0:
             mths_postop += 1
@@ -115,23 +117,23 @@ def read_load():
 
         #Miguel Gonzalez 400529229
         #LED outputs
-
-        if dataset[2][mths_postop] < 0.1*dataset[5][mths_postop]:
+        if dataset[2][mths_postop - 1] < 0.1*dataset[5][mths_postop - 1]:
             green_led.on()
             yellow_led.off()
             red_led.off()
 
-        if 0.1*dataset[5][mths_postop] <= dataset[2][mths_postop] < 0.5*dataset[5][mths_postop]:
+        elif 0.1*dataset[5][mths_postop - 1] <= dataset[2][mths_postop - 1] < 0.5*dataset[5][mths_postop - 1]:
             green_led.off()
             yellow_led.on()
             red_led.off()
 
-        elif 0.5 * dataset[5][mths_postop] <= dataset[2][mths_postop] < dataset[5][mths_postop]:
+        elif 0.5 * dataset[5][mths_postop - 1] <= dataset[2][mths_postop - 1] < dataset[5][mths_postop -1]:
             green_led.off()
             yellow_led.off()
             red_led.on()
 
         else:     #if resultant stress of bone is >= to UTS
+            if red_led.is_lit: red_led.off()
             red_led.blink(0.05)
             green_led.off()
             yellow_led.off()
@@ -140,7 +142,10 @@ def read_load():
         #Andrew Lian
         if len(dataset[0]) == 360:
             plot_chart([*map(lambda data: data/12, dataset[0])], dataset[2], dataset[5])
-            break
+            green_led.off()
+            yellow_led.off()
+            red_led.off()
+            return
 
         time.sleep(0)
 
@@ -165,13 +170,14 @@ E_s = 105 #elastic modulus of Ti-6Al-7Nb
 #load cell data
 sensor_val = 0
 mths_postop = 0
-zero_offset = 107832.875
-calibration_factor = 424.93263888
+zero_offset = -139693.0625
+calibration_factor = 420.47569444
+
 
 #setting LED pins of each colour
-green_led = LED(26)
-yellow_led = LED(20)
-red_led = LED(16)
+green_led = LED(19)
+yellow_led = LED(6)
+red_led = LED(12)
 
 #Andrew Lian
 dataset = [[], [], [], [], [], []] # define dataset to store calculated stress values
@@ -179,11 +185,7 @@ dataset = [[], [], [], [], [], []] # define dataset to store calculated stress v
 #initialize sensor
 load_sensor = Load_Cell_Sensor()
 load_sensor.begin()
-load_sensor.zero_offset(zero_offset)
+load_sensor.set_zero_offset(zero_offset)
 load_sensor.set_calibration_factor(calibration_factor)
 
 read_load()
-
-
-
-

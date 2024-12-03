@@ -7,5 +7,5 @@
     <option name="show" value="ASK" />
     <option name="description" value="" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10 (DP2)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 3.9.2 (sftp://pi@192.168.2.2:22/home/pi/Documents/DP2/bin/python)" project-jdk-type="Python SDK" />
 </project>
