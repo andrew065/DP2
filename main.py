@@ -23,7 +23,7 @@ def em_b(a):
         elif s == 'female':    #if sex of patient is male
             modulus_b = -0.196 * (a - 40) + 17
         else:
-            print("Invalid s value. Try using only lowercase characters")
+            print("Invalid s value. Must be either 'male' or 'female')
 
     return round(modulus_b, 1)
 
@@ -95,10 +95,10 @@ def read_load():
 
     while True:
         sensor_val = load_sensor.get_weight()
-        # sensor_val = load_sensor.get_virtual_weight(10, 1) #TODO: update to check from actual sensor
+        #sensor_val = load_sensor.get_virtual_weight(10, 1)    #virtual sensor (used for testing)
         load = applied_load(sensor_val)
 
-
+        #creating a chart of data and plotting UTS and Result-stress vs years
         if sensor_val > 0:
             mths_postop += 1
             e_b = em_b(age + mths_postop/12)
